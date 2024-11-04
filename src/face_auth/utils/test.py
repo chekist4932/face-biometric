@@ -1,7 +1,7 @@
 import torch
 
-from model import model, device
-from dataset import test_loader
+from src.face_auth.utils.model import model, device
+from src.face_auth.utils.dataset import test_loader
 
 
 def test_model():

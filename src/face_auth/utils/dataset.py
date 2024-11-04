@@ -8,19 +8,19 @@ from PIL import Image
 
 from src.config import BASE_DIR
 
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
-])
-
 
 class FaceDataset(Dataset):
-    def __init__(self, image_dir: str, transform=transform):
+    def __init__(self, image_dir: str):
         self.root_dir = image_dir
-        self.transform = transform
         self.image_paths: list = self._get_image_paths()
-        self.keys = torch.load(BASE_DIR / 'models' / 'keys.pth')
+
+        self.keys = torch.load(BASE_DIR / 'models' / 'keys.pth', weights_only=True)
+
+        self.transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+        ])
 
     def __len__(self):
         return len(self.image_paths)
@@ -54,8 +54,8 @@ class FaceDataset(Dataset):
 
 dataset_dir = BASE_DIR / 'dataset'
 
-train_set = FaceDataset(dataset_dir / 'train', transform=transform)
+train_set = FaceDataset(dataset_dir / 'train')
 train_loader = DataLoader(train_set, batch_size=15, shuffle=True)
 
-test_set = FaceDataset(dataset_dir / 'test', transform=transform)
+test_set = FaceDataset(dataset_dir / 'test')
 test_loader = DataLoader(train_set, batch_size=15, shuffle=True)
